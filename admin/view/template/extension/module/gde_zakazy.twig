@@ -1,0 +1,297 @@
+{{ header }}{{ column_left }}
+<div id="content">
+    <div class="page-header">
+        <div class="container-fluid">
+            <div class="pull-right">
+                <button type="submit" form="form-gde-zakazy" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary">
+                    <i class="fa fa-save"></i>
+                </button>
+                <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default">
+                    <i class="fa fa-reply"></i>
+                </a>
+            </div>
+            <h1>{{ heading_title }}</h1>
+            <ul class="breadcrumb">
+                {% for breadcrumb in breadcrumbs %}
+                    <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_edit }}</h3>
+            </div>
+            <div class="panel-body">
+                <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-gde-zakazy" class="form-horizontal" autocomplete="off">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label" for="input-status">{{ entry_status }}</label>
+                                <div class="col-sm-8">
+                                    <select name="module_gde_zakazy_status" id="input-status" class="form-control">
+                                        {% if gde_zakazy_status %}
+                                            <option value="1" selected="selected">{{ text_enabled }}</option>
+                                            <option value="0">{{ text_disabled }}</option>
+                                        {% else %}
+                                            <option value="1">{{ text_enabled }}</option>
+                                            <option value="0" selected="selected">{{ text_disabled }}</option>
+                                        {% endif %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label" for="gde_zakazy_api_token">
+                                    {{ label_gde_zakazy_api_token }}
+                                </label>
+                                <div class="col-sm-8">
+                                    <input type="text" name="module_gde_zakazy_api_token"
+                                           value="{{ gde_zakazy_api_token }}"
+                                           id="gde_zakazy_api_token" class="form-control" />
+                                    {% if error['gde_zakazy_api_token'] is defined %}
+                                        <div class="text-danger">{{ error['gde_zakazy_api_token'] }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">{{ label_gde_zakazy_fields }}</label>
+                                <div class="col-sm-8">
+                                    <div class="well well-sm" style="height: 200px; overflow: auto;">
+                                        {% for field_id, field_name in fields %}
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" name="module_gde_zakazy_fields[]" value="{{ field_id }}" {% if field_id in gde_zakazy_fields %}checked="checked"{% endif %} />
+                                                    {{ field_name }}
+                                                </label>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                    {% if error['gde_zakazy_fields'] is defined %}
+                                        <div class="text-danger">{{ error['gde_zakazy_fields'] }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="alert alert-info">
+                                <p>{{ text_cron_prepend }}</p>
+                                <p><a target="_blank" href="{{ cron_action | raw }}"><b>{{ 'curl -s -o /dev/null "' }}{{ cron_action | raw }}{{ '"' }}</b></a></p>
+                                <p>{{ text_cron_append }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-bordered">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label" for="gde_zakazy_error_status">{{ label_gde_zakazy_error_status }}</label>
+                                <div class="col-sm-8">
+                                    <select name="module_gde_zakazy_error_status" id="gde_zakazy_error_status" class="form-control">
+                                        <option value="" {% if gde_zakazy_error_status == '' %}selected="selected"{% endif %}>{{ label_status_disabled }}</option>
+                                        {% for stat in statuses %}
+                                            <option value="{{ stat.order_status_id }}" {% if gde_zakazy_error_status == stat.order_status_id %}selected="selected"{% endif %}>{{ stat.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    {% if error['gde_zakazy_error_status'] is defined %}
+                                        <div class="text-danger">{{ error['gde_zakazy_error_status'] }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <p>&nbsp;</p>
+                            <label><input class="notify-checkbox" type="checkbox" name="module_gde_zakazy_error_notify" {% if gde_zakazy_error_notify %}checked{% endif %} /> {{ label_gde_zakazy_notify }}</label>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="textarea">
+                                <textarea class="form-control" name="module_gde_zakazy_error_notify_text">{{ gde_zakazy_error_notify_text }}</textarea>
+                                <p class="text-muted small">{{ label_gde_zakazy_notify_text_note }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-bordered">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label" for="gde_zakazy_department_status">{{ label_gde_zakazy_department_status }}</label>
+                                <div class="col-sm-8">
+                                    <select name="module_gde_zakazy_department_status" id="gde_zakazy_department_status" class="form-control">
+                                        <option value="" {% if gde_zakazy_department_status == '' %}selected="selected"{% endif %}>{{ label_status_disabled }}</option>
+                                        {% for stat in statuses %}
+                                            <option value="{{ stat.order_status_id }}" {% if gde_zakazy_department_status == stat.order_status_id %}selected="selected"{% endif %}>{{ stat.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    {% if error['gde_zakazy_department_status'] is defined %}
+                                        <div class="text-danger">{{ error['gde_zakazy_department_status'] }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <p>&nbsp;</p>
+                            <label><input class="notify-checkbox" type="checkbox" name="module_gde_zakazy_department_notify" {% if gde_zakazy_department_notify %}checked{% endif %} /> {{ label_gde_zakazy_notify }}</label>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="textarea">
+                                <textarea class="form-control" name="module_gde_zakazy_department_notify_text">{{ gde_zakazy_department_notify_text }}</textarea>
+                                <p class="text-muted small">{{ label_gde_zakazy_notify_text_note }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-bordered">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label" for="gde_zakazy_problem_status">{{ label_gde_zakazy_problem_status }}</label>
+                                <div class="col-sm-8">
+                                    <select name="module_gde_zakazy_problem_status" id="gde_zakazy_problem_status" class="form-control">
+                                        <option value="" {% if gde_zakazy_problem_status == '' %}selected="selected"{% endif %}>{{ label_status_disabled }}</option>
+                                        {% for stat in statuses %}
+                                            <option value="{{ stat.order_status_id }}" {% if gde_zakazy_problem_status == stat.order_status_id %}selected="selected"{% endif %}>{{ stat.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    {% if error['gde_zakazy_problem_status'] is defined %}
+                                        <div class="text-danger">{{ error['gde_zakazy_problem_status'] }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <p>&nbsp;</p>
+                            <label><input class="notify-checkbox" type="checkbox" name="module_gde_zakazy_problem_notify" {% if gde_zakazy_problem_notify %}checked{% endif %} /> {{ label_gde_zakazy_notify }}</label>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="textarea">
+                                <textarea class="form-control" name="module_gde_zakazy_problem_notify_text">{{ gde_zakazy_problem_notify_text }}</textarea>
+                                <p class="text-muted small">{{ label_gde_zakazy_notify_text_note }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-bordered">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label" for="gde_zakazy_success_status">{{ label_gde_zakazy_success_status }}</label>
+                                <div class="col-sm-8">
+                                    <select name="module_gde_zakazy_success_status" id="gde_zakazy_success_status" class="form-control">
+                                        <option value="" {% if gde_zakazy_success_status == '' %}selected="selected"{% endif %}>{{ label_status_disabled }}</option>
+                                        {% for stat in statuses %}
+                                            <option value="{{ stat.order_status_id }}" {% if gde_zakazy_success_status == stat.order_status_id %}selected="selected"{% endif %}>{{ stat.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    {% if error['gde_zakazy_success_status'] is defined %}
+                                        <div class="text-danger">{{ error['gde_zakazy_success_status'] }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <p>&nbsp;</p>
+                            <label><input class="notify-checkbox" type="checkbox" name="module_gde_zakazy_success_notify" {% if gde_zakazy_success_notify %}checked{% endif %} /> {{ label_gde_zakazy_notify }}</label>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="textarea">
+                                <textarea class="form-control" name="module_gde_zakazy_success_notify_text">{{ gde_zakazy_success_notify_text }}</textarea>
+                                <p class="text-muted small">{{ label_gde_zakazy_notify_text_note }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-bordered">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label" for="gde_zakazy_problem_success_status">{{ label_gde_zakazy_problem_success_status }}</label>
+                                <div class="col-sm-8">
+                                    <select name="module_gde_zakazy_problem_success_status" id="gde_zakazy_problem_success_status" class="form-control">
+                                        <option value="" {% if gde_zakazy_problem_success_status == '' %}selected="selected"{% endif %}>{{ label_status_disabled }}</option>
+                                        {% for stat in statuses %}
+                                            <option value="{{ stat.order_status_id }}" {% if gde_zakazy_problem_success_status == stat.order_status_id %}selected="selected"{% endif %}>{{ stat.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    {% if error['gde_zakazy_problem_success_status'] is defined %}
+                                        <div class="text-danger">{{ error['gde_zakazy_problem_success_status'] }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <p>&nbsp;</p>
+                            <label><input class="notify-checkbox" type="checkbox" name="module_gde_zakazy_problem_success_notify" {% if gde_zakazy_problem_success_notify %}checked{% endif %} /> {{ label_gde_zakazy_notify }}</label>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="textarea">
+                                <textarea class="form-control" name="module_gde_zakazy_problem_success_notify_text">{{ gde_zakazy_problem_success_notify_text }}</textarea>
+                                <p class="text-muted small">{{ label_gde_zakazy_notify_text_note }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-bordered">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label" for="gde_zakazy_tracking_status">{{ label_gde_zakazy_tracking_status }}</label>
+                                <div class="col-sm-8">
+                                    <select name="module_gde_zakazy_tracking_status" id="gde_zakazy_tracking_status" class="form-control">
+                                        <option value="" {% if gde_zakazy_tracking_status == '' %}selected="selected"{% endif %}>{{ label_status_disabled }}</option>
+                                        {% for stat in statuses %}
+                                            <option value="{{ stat.order_status_id }}" {% if gde_zakazy_tracking_status == stat.order_status_id %}selected="selected"{% endif %}>{{ stat.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    {% if error['gde_zakazy_tracking_status'] is defined %}
+                                        <div class="text-danger">{{ error['gde_zakazy_tracking_status'] }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <p>&nbsp;</p>
+                            <label><input class="notify-checkbox" type="checkbox" name="module_gde_zakazy_tracking_notify" {% if gde_zakazy_tracking_notify %}checked{% endif %} /> {{ label_gde_zakazy_notify }}</label>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="textarea">
+                                <textarea class="form-control" name="module_gde_zakazy_tracking_notify_text">{{ gde_zakazy_tracking_notify_text }}</textarea>
+                                <p class="text-muted small">{{ label_gde_zakazy_notify_text_note }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    label.disabled {
+        opacity: 0.5;
+    }
+    .row-bordered {
+        border-top: 1px solid #ededed;
+    }
+    .row-bordered .control-label {
+        font-size: 10px;
+    }
+    .row-bordered select.form-control {
+        margin-top: 10px;
+    }
+</style>
+<script>
+    $(function () {
+        function updateNotifiers() {
+            $('.notify-checkbox').each(function () {
+                var $this = $(this), $textarea = $this.closest('.row').find('.textarea'), $select = $('#' + $this.attr('name').replace('module_', '').replace('_notify', '_status'));
+                if ($select.val()) {
+                    $this.prop('disabled', false).closest('label').removeClass('disabled');
+                } else {
+                    $this.prop('disabled', true).closest('label').addClass('disabled');
+                }
+                if ($this.is(':checked') && $select.val()) {
+                    $textarea.show();
+                } else {
+                    $textarea.hide();
+                }
+            });
+        }
+        updateNotifiers();
+        $('.notify-checkbox').click(function () {
+            updateNotifiers();
+        });
+        $('select').change(function () {
+            updateNotifiers();
+        });
+    });
+</script>
+{{ footer }}

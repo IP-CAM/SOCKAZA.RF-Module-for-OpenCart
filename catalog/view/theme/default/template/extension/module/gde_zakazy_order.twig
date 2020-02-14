@@ -1,0 +1,108 @@
+<div id="gde_zakazy_tab">
+    {% if error | default(null) %}
+        <div class="alert alert-danger">{{ error | nl2br }}</div>
+    {% endif %}
+    {{ order_tab_prepend_note }}
+    <p>&nbsp;</p>
+    <p>{{ order_tab_status_label }}: {% if apiStatus['status'] %}{{ order_tab_status_enabled }}{% else %}{{ order_tab_status_disabled }}{% endif %}</p>
+    {% if apiStatus['status'] %}
+        <p>
+            {{ order_tab_limits_label }}
+            {% if apiStatus['expired'] %}
+                {{ order_tab_limits_paid | replace({'%expired%': apiStatus['expired']}) }}
+            {% else %}
+                {{ order_tab_limits_free | replace({'%limit%': apiStatus['limit']}) }}
+            {% endif %}
+        </p>
+    {% endif %}
+    <p>&nbsp;</p>
+    {% if track and status != 'archive' %}
+        <div style="background: #ddd;padding: 10px;">
+            <p>
+                {{ order_tab_track }}: <b>{{ track }}</b>
+                {% if status != 'archive' %}
+                    <button class="btn btn-sm btn-primary" id="gde_zakazy_archive_btn">{{ order_tab_archive_btn }}</button>
+                {% endif %}
+            </p>
+            {% if on_server_updated_at | default(null) %}
+                <p>{{ order_tab_updated }}: <b>{{ on_server_updated_at | date('d.m.Y H:i') }}</b></p>
+            {% else %}
+                {% if status | default(null) %}
+                    <p>{{ order_tab_not_updated }}</p>
+                {% else %}
+                    <p>{{ order_tab_not_obtained }}</p>
+                {% endif %}
+            {% endif %}
+            {% if status | default(null) %}
+                <p>
+                    {{ order_tab_status }}:
+                    <b>
+                        {% if status == 'new' %}
+                            {{ order_tab_status_new }}
+                        {% elseif status == 'ontheway' %}
+                            {{ order_tab_status_ontheway }}
+                        {% elseif status == 'problem' %}
+                            {{ order_tab_status_problem }}
+                        {% elseif status == 'department' %}
+                            {{ order_tab_status_department }}
+                        {% elseif status == 'delivered' %}
+                            {{ order_tab_status_delivered }}
+                        {% elseif status == 'archive' %}
+                            {{ order_tab_status_archive }}
+                        {% endif %}
+                    </b>
+                </p>
+            {% endif %}
+        </div>
+    {% endif %}
+    {% if (not track or status == 'archive') and apiStatus['canAdd'] %}
+        <div style="background: #ddd;padding: 10px;">
+            <p>{{ order_tab_form_caption }}</p>
+            <form class="form-inline mb-3" id="gde_zakazy_add_form">
+                <input type="hidden" name="order_id" value="{{ order_id }}">
+                <div class="form-group">
+                    <label>{{ order_tab_label_track }}</label>
+                    &nbsp;&nbsp;&nbsp;
+                    <input type="text" class="form-control" name="track" value="">
+                </div>
+                <button class="btn btn-primary">{{ order_tab_form_submit }}</button>
+            </form>
+        </div>
+    {% endif %}
+    <script>
+        $(function () {
+            $('#gde_zakazy_add_form .btn-primary').click(function () {
+                $.ajax({
+                    url: {{ ajax | json_encode | raw }},
+                    data: $('#gde_zakazy_add_form input').serialize(),
+                    method: 'POST',
+                    success: function (data) {
+                        $('#gde_zakazy_tab').replaceWith(data);
+                    },
+                    error: function () {
+                        $('<div class="alert alert-danger"></div>').text('Request error').prependTo('#gde_zakazy_tab');
+                    }
+                });
+                return false;
+            });
+            $('#gde_zakazy_archive_btn').click(function () {
+                if (confirm('{{ order_tab_archive_confirm }}')) {
+                    $.ajax({
+                        url: {{ ajaxArchive | json_encode | raw }},
+                        data: {
+                            order_id: '{{ order_id }}'
+                        },
+                        method: 'POST',
+                        success: function (data) {
+                            $('#gde_zakazy_tab').replaceWith(data);
+                        },
+                        error: function () {
+                            $('<div class="alert alert-danger"></div>').text('Request error').prependTo('#gde_zakazy_tab');
+                        }
+                    });
+                }
+                return false;
+            });
+        });
+    </script>
+</div>

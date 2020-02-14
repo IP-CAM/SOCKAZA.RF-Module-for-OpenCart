@@ -1,0 +1,17 @@
+<div id="gde_zakazy_tab">
+    <script>
+        $(function () {
+            $.ajax({
+                url: {{ ajax | json_encode | raw }},
+                data: {order_id: {{ orderId }}},
+                method: 'POST',
+                success: function (data) {
+                    $('#gde_zakazy_tab').replaceWith(data);
+                },
+                error: function () {
+                    $('<div class="alert alert-danger"></div>').text('Request error').prependTo('#gde_zakazy_tab');
+                }
+            });
+        });
+    </script>
+</div>
