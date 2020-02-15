@@ -98,11 +98,9 @@ class ModelExtensionModuleGdeZakazy extends Model {
             throw new Exception($message);
         }
         $this->db->query("INSERT INTO `" . DB_PREFIX . "order_gdezakazy` SET order_id = $orderId, track = '" . $this->db->escape($track) . "'");
-        if ($this->config->get('module_gde_zakazy_tracking_status')) {
-            $this->updateOrderStatus($orderId, 'tracking', [
-                'track' => $track,
-            ]);
-        }
+        $this->updateOrderStatus($orderId, 'tracking', [
+            'track' => $track,
+        ]);
     }
 
     public function updateOrderInfo($token, $orderId) {
