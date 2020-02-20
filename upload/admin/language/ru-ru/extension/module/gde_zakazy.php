@@ -7,7 +7,7 @@ $_['text_module']      = 'Модули';
 $_['text_success']     = 'Настройки успешно изменены!';
 $_['text_edit']        = 'Настройки модуля';
 $_['entry_status']     = 'Статус модуля';
-$_['gde_zakazy_version'] = 'Текущая версия 1.1';
+$_['gde_zakazy_version'] = 'Текущая версия 1.2';
 
 // Labels
 $_['label_gde_zakazy_api_token']        = 'API токен';
