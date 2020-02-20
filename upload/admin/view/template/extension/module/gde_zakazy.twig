@@ -84,6 +84,34 @@
                     <div class="row row-bordered">
                         <div class="col-md-6">
                             <div class="form-group">
+                                <label class="col-sm-4 control-label" for="gde_zakazy_tracking_status">{{ label_gde_zakazy_tracking_status }}</label>
+                                <div class="col-sm-8">
+                                    <select name="module_gde_zakazy_tracking_status" id="gde_zakazy_tracking_status" class="form-control">
+                                        <option value="" {% if gde_zakazy_tracking_status == '' %}selected="selected"{% endif %}>{{ label_status_disabled }}</option>
+                                        {% for stat in statuses %}
+                                            <option value="{{ stat.order_status_id }}" {% if gde_zakazy_tracking_status == stat.order_status_id %}selected="selected"{% endif %}>{{ stat.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    {% if error['gde_zakazy_tracking_status'] is defined %}
+                                        <div class="text-danger">{{ error['gde_zakazy_tracking_status'] }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <p>&nbsp;</p>
+                            <label><input class="notify-checkbox" type="checkbox" name="module_gde_zakazy_tracking_notify" {% if gde_zakazy_tracking_notify %}checked{% endif %} /> {{ label_gde_zakazy_notify }}</label>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="textarea">
+                                <textarea class="form-control" name="module_gde_zakazy_tracking_notify_text">{{ gde_zakazy_tracking_notify_text }}</textarea>
+                                <p class="text-muted small">{{ label_gde_zakazy_notify_text_note }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-bordered">
+                        <div class="col-md-6">
+                            <div class="form-group">
                                 <label class="col-sm-4 control-label" for="gde_zakazy_error_status">{{ label_gde_zakazy_error_status }}</label>
                                 <div class="col-sm-8">
                                     <select name="module_gde_zakazy_error_status" id="gde_zakazy_error_status" class="form-control">
@@ -221,34 +249,6 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row row-bordered">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label" for="gde_zakazy_tracking_status">{{ label_gde_zakazy_tracking_status }}</label>
-                                <div class="col-sm-8">
-                                    <select name="module_gde_zakazy_tracking_status" id="gde_zakazy_tracking_status" class="form-control">
-                                        <option value="" {% if gde_zakazy_tracking_status == '' %}selected="selected"{% endif %}>{{ label_status_disabled }}</option>
-                                        {% for stat in statuses %}
-                                            <option value="{{ stat.order_status_id }}" {% if gde_zakazy_tracking_status == stat.order_status_id %}selected="selected"{% endif %}>{{ stat.name }}</option>
-                                        {% endfor %}
-                                    </select>
-                                    {% if error['gde_zakazy_tracking_status'] is defined %}
-                                        <div class="text-danger">{{ error['gde_zakazy_tracking_status'] }}</div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <p>&nbsp;</p>
-                            <label><input class="notify-checkbox" type="checkbox" name="module_gde_zakazy_tracking_notify" {% if gde_zakazy_tracking_notify %}checked{% endif %} /> {{ label_gde_zakazy_notify }}</label>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="textarea">
-                                <textarea class="form-control" name="module_gde_zakazy_tracking_notify_text">{{ gde_zakazy_tracking_notify_text }}</textarea>
-                                <p class="text-muted small">{{ label_gde_zakazy_notify_text_note }}</p>
-                            </div>
-                        </div>
-                    </div>
                 </form>
                 <div class="text-center small"><br />{{ gde_zakazy_version }}</div>
             </div>
@@ -259,11 +259,15 @@
     label.disabled {
         opacity: 0.5;
     }
+    .notify-checkbox {
+        margin-right: 5px !important;
+    }
     .row-bordered {
         border-top: 1px solid #ededed;
     }
     .row-bordered .control-label {
         font-size: 10px;
+        font-weight: normal;
     }
     .row-bordered select.form-control {
         margin-top: 10px;
