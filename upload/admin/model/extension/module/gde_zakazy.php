@@ -66,6 +66,7 @@ class ModelExtensionModuleGdeZakazy extends Model {
     }
 
     public function addOrder($token, $orderId, $track, $fields) {
+        $orderId = (int)$orderId;
         $this->db->query("DELETE FROM `" . DB_PREFIX . "order_gdezakazy` WHERE order_id = $orderId AND status = 'archive'");
         $orderExistsQuery = $this->db->query("SELECT COUNT(*) as cnt FROM `" . DB_PREFIX . "order_gdezakazy` WHERE order_id = $orderId");
         if ($orderExistsQuery->row['cnt'] > 0) {
@@ -104,6 +105,7 @@ class ModelExtensionModuleGdeZakazy extends Model {
     }
 
     public function updateOrderInfo($token, $orderId) {
+        $orderId = (int)$orderId;
         $query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order_gdezakazy` WHERE order_id = $orderId");
         if (!$query->row) {
             return;
@@ -144,6 +146,7 @@ class ModelExtensionModuleGdeZakazy extends Model {
     }
 
     public function getOrderInfo($token, $orderId, $catch = true) {
+        $orderId = (int)$orderId;
         $error = null;
         try {
             $this->updateOrderInfo($token, $orderId);
@@ -160,6 +163,7 @@ class ModelExtensionModuleGdeZakazy extends Model {
     }
 
     public function archiveOrder($token, $orderId) {
+        $orderId = (int)$orderId;
         $query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order_gdezakazy` WHERE order_id = $orderId");
         if (!$query->row) {
             throw new \Exception('Track not found');
