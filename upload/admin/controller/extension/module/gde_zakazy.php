@@ -143,6 +143,8 @@ class ControllerExtensionModuleGdeZakazy extends Controller {
             "PRIMARY KEY (`order_id`)) ENGINE = InnoDB;";
         $this->db->query($sql);
 
+        $sql = "ALTER TABLE `" . DB_PREFIX . "order_gdezakazy` CHANGE `status` `status` ENUM('new','ontheway','problem','department','delivered','archive','notregistered') NULL DEFAULT NULL;";
+        $this->db->query($sql);
 
 		$this->load->model('setting/event');
 

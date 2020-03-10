@@ -67,6 +67,7 @@ $_['order_tab_status']            = 'Текущий статус';
 $_['order_tab_not_updated']       = 'Информация о статусе еще не обновлялась';
 $_['order_tab_not_obtained']      = 'Информация с сервера еще не поступала';
 $_['order_tab_status_new']        = 'Новый';
+$_['order_tab_status_notregistered'] = 'Незарегистрированный трекинг';
 $_['order_tab_status_ontheway']   = 'В пути';
 $_['order_tab_status_problem']    = 'Проблема';
 $_['order_tab_status_department'] = 'В отделении';

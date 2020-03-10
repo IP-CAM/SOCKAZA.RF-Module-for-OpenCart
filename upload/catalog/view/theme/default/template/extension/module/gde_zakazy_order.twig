@@ -39,6 +39,8 @@
                     <b>
                         {% if status == 'new' %}
                             {{ order_tab_status_new }}
+                        {% elseif status == 'notregistered' %}
+                            {{ order_tab_status_notregistered }}
                         {% elseif status == 'ontheway' %}
                             {{ order_tab_status_ontheway }}
                         {% elseif status == 'problem' %}
