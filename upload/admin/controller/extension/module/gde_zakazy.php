@@ -3,7 +3,17 @@
 class ControllerExtensionModuleGdeZakazy extends Controller {
 	private $error = array();
 
+	protected function migrations() {
+        $result = $this->db->query("SHOW COLUMNS FROM `" . DB_PREFIX . "order_gdezakazy` WHERE Field = 'status'");
+        if (strpos($result->rows[0]['Type'], 'notregistered') === false) {
+            $sql = "ALTER TABLE `" . DB_PREFIX . "order_gdezakazy` CHANGE `status` `status` ENUM('new','ontheway','problem','department','delivered','archive','notregistered') NULL DEFAULT NULL;";
+            $this->db->query($sql);
+        }
+    }
+
 	public function index() {
+	    $this->migrations();
+
 		$this->load->language('extension/module/gde_zakazy');
 		$this->document->setTitle($this->language->get('heading_title'));
 		$this->load->model('setting/setting');
@@ -136,14 +146,11 @@ class ControllerExtensionModuleGdeZakazy extends Controller {
             "`is_active` TINYINT NOT NULL DEFAULT '1' , ".
             "`track` VARCHAR(64) NOT NULL , ".
             "`updated_at` INT NULL , ".
-            "`status` ENUM('new','ontheway','problem','department','delivered','archive') NULL , ".
+            "`status` ENUM('new','ontheway','problem','department','delivered','archive','notregistered') NULL , ".
             "`is_problem` TINYINT NOT NULL DEFAULT '0' , ".
             "`on_server_updated_at` INT NULL , ".
             "`error` VARCHAR(255) NULL , ".
             "PRIMARY KEY (`order_id`)) ENGINE = InnoDB;";
-        $this->db->query($sql);
-
-        $sql = "ALTER TABLE `" . DB_PREFIX . "order_gdezakazy` CHANGE `status` `status` ENUM('new','ontheway','problem','department','delivered','archive','notregistered') NULL DEFAULT NULL;";
         $this->db->query($sql);
 
 		$this->load->model('setting/event');
