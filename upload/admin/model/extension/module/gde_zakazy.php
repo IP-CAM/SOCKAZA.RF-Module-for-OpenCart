@@ -66,13 +66,12 @@ class ModelExtensionModuleGdeZakazy extends Model {
     }
 
     public function addOrder($token, $orderId, $track, $fields) {
-        $orderId = (int)$orderId;
-        $this->db->query("DELETE FROM `" . DB_PREFIX . "order_gdezakazy` WHERE order_id = $orderId AND status = 'archive'");
-        $orderExistsQuery = $this->db->query("SELECT COUNT(*) as cnt FROM `" . DB_PREFIX . "order_gdezakazy` WHERE order_id = $orderId");
+        $this->db->query("DELETE FROM `" . DB_PREFIX . "order_gdezakazy` WHERE order_id = ".(int)$orderId." AND status = 'archive'");
+        $orderExistsQuery = $this->db->query("SELECT COUNT(*) as cnt FROM `" . DB_PREFIX . "order_gdezakazy` WHERE order_id = ".(int)$orderId);
         if ($orderExistsQuery->row['cnt'] > 0) {
             throw new InvalidArgumentException('Order is already exist');
         }
-        $orderQuery = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order` WHERE order_id = $orderId");
+        $orderQuery = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order` WHERE order_id = ".(int)$orderId);
         if (!$orderQuery->row) {
             throw new InvalidArgumentException('Order not found');
         }
@@ -98,15 +97,14 @@ class ModelExtensionModuleGdeZakazy extends Model {
             }
             throw new Exception($message);
         }
-        $this->db->query("INSERT INTO `" . DB_PREFIX . "order_gdezakazy` SET order_id = $orderId, track = '" . $this->db->escape($track) . "'");
+        $this->db->query("INSERT INTO `" . DB_PREFIX . "order_gdezakazy` SET order_id = ".(int)$orderId.", track = '" . $this->db->escape($track) . "'");
         $this->updateOrderStatus($orderId, 'tracking', [
             'track' => $track,
         ]);
     }
 
     public function updateOrderInfo($token, $orderId) {
-        $orderId = (int)$orderId;
-        $query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order_gdezakazy` WHERE order_id = $orderId");
+        $query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order_gdezakazy` WHERE order_id = ".(int)$orderId);
         if (!$query->row) {
             return;
         }
@@ -120,14 +118,14 @@ class ModelExtensionModuleGdeZakazy extends Model {
         }
         $isActive = 1;
         $isProblem = ($requestData['data']['was_problem'] ? 1 : 0);
-        $newStatus = $this->db->escape($requestData['data']['status']);
+        $newStatus = $requestData['data']['status'];
         if ($newStatus == 'archive' || $newStatus == 'delivered') {
             $isActive = 0;
         }
         $updatedAt = strtotime($requestData['data']['updated_at']);
         $error = $requestData['data']['had_error'] ? 'ERROR' : '';
         $now = time();
-        $this->db->query("UPDATE `" . DB_PREFIX . "order_gdezakazy` SET updated_at = $now, status = '$newStatus', is_problem = $isProblem, is_active = $isActive, on_server_updated_at = '$updatedAt', error = '$error' WHERE order_id = $orderId");
+        $this->db->query("UPDATE `" . DB_PREFIX . "order_gdezakazy` SET updated_at = ".(int)$now.", status = '".$this->db->escape($newStatus)."', is_problem = ".(int)$isProblem.", is_active = ".(int)$isActive.", on_server_updated_at = ".(int)$updatedAt.", error = '".$this->db->escape($error)."' WHERE order_id = ".(int)$orderId);
         if ($newStatus == 'delivered' && $query->row['status'] != 'delivered' && $isProblem) {
             $this->updateOrderStatus($orderId, 'problem_success', $query->row);
         }
@@ -146,7 +144,6 @@ class ModelExtensionModuleGdeZakazy extends Model {
     }
 
     public function getOrderInfo($token, $orderId, $catch = true) {
-        $orderId = (int)$orderId;
         $error = null;
         try {
             $this->updateOrderInfo($token, $orderId);
@@ -156,7 +153,7 @@ class ModelExtensionModuleGdeZakazy extends Model {
             }
             $error = $e->getMessage();
         }
-        $query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order_gdezakazy` WHERE order_id = $orderId");
+        $query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order_gdezakazy` WHERE order_id = ".(int)$orderId);
         return array_merge($query->row, [
             'error' => $error
         ]);
@@ -164,7 +161,7 @@ class ModelExtensionModuleGdeZakazy extends Model {
 
     public function archiveOrder($token, $orderId) {
         $orderId = (int)$orderId;
-        $query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order_gdezakazy` WHERE order_id = $orderId");
+        $query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order_gdezakazy` WHERE order_id = ".(int)$orderId);
         if (!$query->row) {
             throw new \Exception('Track not found');
         }
@@ -174,7 +171,7 @@ class ModelExtensionModuleGdeZakazy extends Model {
             $message = isset($requestData['data']['message']) ? $requestData['data']['message'] : 'Request error';
             throw new Exception($message);
         }
-        $this->db->query("UPDATE `" . DB_PREFIX . "order_gdezakazy` SET status = 'archive', is_active = 0 WHERE order_id = $orderId");
+        $this->db->query("UPDATE `" . DB_PREFIX . "order_gdezakazy` SET status = 'archive', is_active = 0 WHERE order_id = ".(int)$orderId);
         $track['status'] = 'archive';
         return $track;
     }
