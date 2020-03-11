@@ -155,6 +155,7 @@ class ControllerExtensionModuleGdeZakazy extends Controller {
 
 		$this->load->model('setting/event');
 
+        $this->model_setting_event->deleteEventByCode('admin_module_gde_zakazy_order');
 		$this->model_setting_event->addEvent('admin_module_gde_zakazy_order', 'admin/view/sale/order_info/before', 'extension/module/gde_zakazy/order');
 	}
 
