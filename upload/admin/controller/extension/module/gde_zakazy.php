@@ -41,6 +41,7 @@ class ControllerExtensionModuleGdeZakazy extends Controller {
 		);
 		$data['action'] = $this->url->link('extension/module/gde_zakazy', 'user_token=' . $this->session->data['user_token'], 'SSL');
 		$data['cancel'] = $this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token'], 'SSL');
+        $data['diagnosis_url'] = html_entity_decode($this->url->link('extension/module/gde_zakazy/diagnosis', 'user_token=' . $this->session->data['user_token'], 'SSL'));
         $data['cron_action'] = HTTPS_CATALOG . 'index.php?route=extension/module/gde_zakazy/cron';
 
         if (isset($this->request->post['module_gde_zakazy_status'])) {
@@ -140,7 +141,13 @@ class ControllerExtensionModuleGdeZakazy extends Controller {
         );
     }
 
-	public function install() {
+    public function diagnosis() {
+        $this->load->model('extension/module/gde_zakazy');
+        $apiToken = trim($this->request->post['token']);
+        $this->response->setOutput($this->model_extension_module_gde_zakazy->diagnosis($apiToken));
+    }
+
+    public function install() {
         $sql = "CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "order_gdezakazy` ( ".
             "`order_id` INT NOT NULL , ".
             "`is_active` TINYINT NOT NULL DEFAULT '1' , ".

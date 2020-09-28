@@ -4,7 +4,7 @@ class ModelExtensionModuleGdeZakazy extends Model {
 
     const BASE = 'https://xn--80aahefmcw9m.xn--p1ai/api/v1/';
 
-    protected function request($token, $method, $path, $data = []) {
+    protected function request($token, $method, $path, $data = [], $verbose = false) {
         $ch = curl_init();
         if (!is_array($data)) {
             $data = [];
@@ -24,12 +24,25 @@ class ModelExtensionModuleGdeZakazy extends Model {
         curl_setopt($ch, CURLOPT_URL, self::BASE.$path);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        if ($verbose) {
+            $log = tmpfile();
+            curl_setopt($ch, CURLOPT_VERBOSE, true);
+            curl_setopt($ch, CURLOPT_STDERR, $log);
+        }
         $response = curl_exec($ch);
         $return = [
             'code' => curl_getinfo($ch, CURLINFO_RESPONSE_CODE),
             'data' => json_decode($response, true),
         ];
         curl_close($ch);
+        if ($verbose) {
+            fseek($log, 0);
+            $return['verbose'] = '';
+            while (!feof($log)) {
+                $return['verbose'] .= fgets($log);
+            }
+            fclose($log);
+        }
         return $return;
     }
 
@@ -39,6 +52,30 @@ class ModelExtensionModuleGdeZakazy extends Model {
             return false;
         }
         return true;
+    }
+
+    public function diagnosis($token) {
+        $data = $this->request($token, 'GET', 'track/0', [], true);
+        $data['php'] = phpversion();
+        $data['curl'] = phpversion('curl');
+        $data['dns'] = json_encode(dns_get_record(parse_url(self::BASE, PHP_URL_HOST), DNS_A || DNS_AAAA));
+        if (!is_string($data['data'])) {
+            $data['data'] = json_encode($data['data']);
+        }
+        if (function_exists('mb_strlen')) {
+            if (mb_strlen($data['data']) > 200) {
+                $data['data'] = mb_substr($data['data'], 0, 200);
+            }
+        } else {
+            if (strlen($data['data']) > 200) {
+                $data['data'] = substr($data['data'], 0, 200);
+            }
+        }
+        $output = '';
+        foreach ($data as $k => $v) {
+            $output .= "[$k] => \n$v\n\n";
+        }
+        return $output;
     }
 
     public function getStatus($token) {

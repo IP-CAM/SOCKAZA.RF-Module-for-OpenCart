@@ -250,7 +250,19 @@
                         </div>
                     </div>
                 </form>
-                <div class="text-center small"><br />{{ gde_zakazy_version }}</div>
+                <div class="text-center small"><br />{{ gde_zakazy_version }} (<a href="#" id="diagnosis">{{ gde_zakazy_diagnosis }}</a>)</div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="diagnosis_modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <textarea class="form-control" style="height:500px" id="diagnosis_modal_log" readonly></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
             </div>
         </div>
     </div>
@@ -296,6 +308,25 @@
         });
         $('select').change(function () {
             updateNotifiers();
+        });
+        $('#diagnosis').click(function () {
+            $('#diagnosis_modal').modal('show');
+            var $log = $('#diagnosis_modal_log');
+            $log.val('Waiting...');
+            $.ajax({
+                url: {{ diagnosis_url | json_encode }},
+                method: 'POST',
+                data: {
+                    token: $('#gde_zakazy_api_token').val()
+                },
+                success: function (data) {
+                    $log.val(data + "\n\n{{ gde_zakazy_version }}");
+                },
+                error: function (e) {
+                    $log.val(e.message);
+                }
+            });
+            return false;
         });
     });
 </script>
