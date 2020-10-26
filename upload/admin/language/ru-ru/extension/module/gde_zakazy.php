@@ -7,11 +7,13 @@ $_['text_module']      = 'Модули';
 $_['text_success']     = 'Настройки успешно изменены!';
 $_['text_edit']        = 'Настройки модуля';
 $_['entry_status']     = 'Статус модуля';
-$_['gde_zakazy_version'] = 'Текущая версия 1.4';
+$_['gde_zakazy_version'] = 'Текущая версия 1.5';
 $_['gde_zakazy_diagnosis'] = 'диагностика';
 
 // Labels
 $_['label_gde_zakazy_api_token']        = 'API токен';
+$_['label_gde_zakazy_ssl_verify']       = 'Допускать небезопасное соединение';
+$_['label_gde_zakazy_ssl_verify_note']  = 'Выбирая небезопасное соединение, вы подвергаете ваших клиентов утечке персональных данных. Мы настоятельно рекомендуем не пользоваться этой опцией.';
 $_['label_gde_zakazy_fields']           = 'Поля для передачи';
 $_['label_gde_zakazy_success_status']   = 'Если посылка в "Доставлены" переносить в статус';
 $_['label_gde_zakazy_error_status']     = 'Переносить в статус при ошибке';

@@ -44,6 +44,11 @@ class ControllerExtensionModuleGdeZakazy extends Controller {
         $data['diagnosis_url'] = html_entity_decode($this->url->link('extension/module/gde_zakazy/diagnosis', 'user_token=' . $this->session->data['user_token'], 'SSL'));
         $data['cron_action'] = HTTPS_CATALOG . 'index.php?route=extension/module/gde_zakazy/cron';
 
+        if (isset($this->request->post['module_gde_zakazy_ssl_verify'])) {
+            $data['gde_zakazy_ssl_verify'] = $this->request->post['module_gde_zakazy_ssl_verify'];
+        } else {
+            $data['gde_zakazy_ssl_verify'] = $this->config->get('module_gde_zakazy_ssl_verify');
+        }
         if (isset($this->request->post['module_gde_zakazy_status'])) {
             $data['gde_zakazy_status'] = $this->request->post['module_gde_zakazy_status'];
         } else {

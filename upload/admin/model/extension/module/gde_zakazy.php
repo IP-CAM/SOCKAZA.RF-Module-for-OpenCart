@@ -5,6 +5,7 @@ class ModelExtensionModuleGdeZakazy extends Model {
     const BASE = 'https://xn--80aahefmcw9m.xn--p1ai/api/v1/';
 
     protected function request($token, $method, $path, $data = [], $verbose = false) {
+        $sslDisabled = $this->config->get("module_gde_zakazy_ssl_verify");
         $ch = curl_init();
         if (!is_array($data)) {
             $data = [];
@@ -18,8 +19,13 @@ class ModelExtensionModuleGdeZakazy extends Model {
         }
         curl_setopt($ch, CURLOPT_TIMEOUT, 5);
         curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/4.0 (compatible; API client)');
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+        if ($sslDisabled) {
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        } else {
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+        }
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_URL, self::BASE.$path);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
